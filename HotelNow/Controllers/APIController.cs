@@ -6,15 +6,15 @@ using VecaVista.Model.Dto;
 
 namespace VecaVista.Controllers
 {
-	[Route("api/createveca")]
-	[ApiController]
-	public class CreateVecaAPIController : ControllerBase
-	{
-		[HttpGet]
+    [Route("api/createveca")]
+    [ApiController]
+    public class CreateVecaAPIController : ControllerBase
+    {
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<VecaDto>> GetVecas()
-		{
-			return Ok(DataStore.vecaList);
+        {
+            return Ok(DataStore.vecaList);
 
         }
 
@@ -41,7 +41,7 @@ namespace VecaVista.Controllers
                 return StatusCode(500, "An error occurred."); // Return 500 Internal Server Error status
             }
 
-            
+
         }
 
         [HttpPost]
@@ -95,7 +95,7 @@ namespace VecaVista.Controllers
 
         [HttpPut]
 
-        public ActionResult<VecaDto> UpdateVeca([FromBody]VecaDto vecaDto)
+        public ActionResult<VecaDto> UpdateVeca([FromBody] VecaDto vecaDto)
         {
             var vecaValue = DataStore.vecaList.FirstOrDefault(u => u.Id == vecaDto.Id);
             if (vecaDto.Id == 0)
@@ -113,6 +113,25 @@ namespace VecaVista.Controllers
             return NotFound();
 
         }
+        [HttpPatch("{id:int}")]
+        public ActionResult<VecaDto> PatchVeca([FromBody] VecaDto patchDto)
+        {
+            var vecaValue = DataStore.vecaList.FirstOrDefault(u => u.Id == patchDto.Id);
+            if (patchDto.Id == 0)
+            {
+                return BadRequest();
+            }
+
+            if (vecaValue?.Id != null)
+            {
+                vecaValue.Name = vecaDto.Name;
+
+                return Ok(vecaValue);
+            }
+
+            return NotFound();
+        }
+
     }
 }
 
