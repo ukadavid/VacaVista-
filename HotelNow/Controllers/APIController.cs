@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using VecaVista.Data;
 using System.Linq;
 using VecaVista.Model.Dto;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace VecaVista.Controllers
 {
@@ -114,22 +115,24 @@ namespace VecaVista.Controllers
 
         }
         [HttpPatch("{id:int}")]
-        public ActionResult<VecaDto> PatchVeca([FromBody] VecaDto patchDto)
+        public ActionResult<VecaDto> PatchVeca(int id, [FromBody] JsonPatchDocument<VecaDto> patchDto)
         {
-            var vecaValue = DataStore.vecaList.FirstOrDefault(u => u.Id == patchDto.Id);
-            if (patchDto.Id == 0)
+            var vecaValue = DataStore.vecaList.FirstOrDefault(u => u.Id == id);
+            if (patchDto == null || id == 0)
             {
                 return BadRequest();
             }
 
             if (vecaValue?.Id != null)
             {
-                vecaValue.Name = vecaDto.Name;
-
-                return Ok(vecaValue);
+                patchDto.ApplyTo(vecaValue, ModelState);
             }
 
-            return NotFound();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            return NoContent();
         }
 
     }
