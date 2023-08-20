@@ -11,10 +11,19 @@ namespace VecaVista.Controllers
     [ApiController]
     public class CreateVecaAPIController : ControllerBase
     {
+        private readonly ILogger<CreateVecaAPIController> _logger;
+
+        public CreateVecaAPIController (ILogger<CreateVecaAPIController> logger)
+        {
+            _logger = logger;
+        }
+
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<VecaDto>> GetVecas()
         {
+            _logger.LogInformation("hey");
             return Ok(DataStore.vecaList);
 
         }
